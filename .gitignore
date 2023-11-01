@@ -20,4 +20,20 @@
 # Go workspace file
 go.work
 
+# VS Code
 __debug_bin
+/.vscode
+
+# Temporary files
+/temp
+
+# GO Vendor folder
+/vendor 
+
+# Env files
+*.env
+
+# TLS certificates
+*.crt
+*.key
+*.pem
