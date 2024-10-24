@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func HandlerStatus(w http.ResponseWriter, r *http.Request) {
@@ -20,16 +21,21 @@ func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/status", HandlerStatus)
 
-	err := http.ListenAndServe(":3333", nil)
+	server := &http.Server{
+		Addr:              ":3333",
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
 	} else if err != nil {
 		fmt.Printf("error starting server: %s\n", err)
 		os.Exit(1)
 	}
-	data, _ := json.Marshal("{}")
-	// if err != nil {
-	// 	log.Println("failed to marshal")
-	// }
+	data, err := json.Marshal("{}")
+	if err != nil {
+		log.Println("failed to marshal")
+	}
 	fmt.Println(data)
 }
