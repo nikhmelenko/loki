@@ -3,19 +3,29 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func HandlerStatus(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "Status OK")
+	_, err := fmt.Fprint(w, "Status OK")
+	if err != nil {
+		log.Println("failed to write")
+	}
 }
 
 func main() {
 	http.HandleFunc("/status", HandlerStatus)
 
-	err := http.ListenAndServe(":3333", nil)
+	server := &http.Server{
+		Addr:              ":3333",
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
 	} else if err != nil {
