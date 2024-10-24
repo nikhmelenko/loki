@@ -1,24 +1,25 @@
 package main
 
 import (
-	"log"
+	"errors"
+	"fmt"
 	"net/http"
-	"time"
-
-	"golang.org/x/net/http2"
+	"os"
 )
 
-func main() {
+func HandlerStatus(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "Status OK")
+}
 
+func main() {
 	http.HandleFunc("/status", HandlerStatus)
 
-	s := &http.Server{
-		Addr:           ":4443",
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+	err := http.ListenAndServe(":3333", nil)
+	if errors.Is(err, http.ErrServerClosed) {
+		fmt.Printf("server closed\n")
+	} else if err != nil {
+		fmt.Printf("error starting server: %s\n", err)
+		os.Exit(1)
 	}
-	http2.ConfigureServer(s, &http2.Server{})
-
-	log.Fatal(s.ListenAndServeTLS("server.crt", "server.key"))
 }
