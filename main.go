@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -33,9 +32,4 @@ func main() {
 		fmt.Printf("error starting server: %s\n", err)
 		os.Exit(1)
 	}
-	data, err := json.Marshal("{}")
-	if err != nil {
-		log.Println("failed to marshal")
-	}
-	fmt.Println(data)
 }
